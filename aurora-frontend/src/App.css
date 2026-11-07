@@ -1,0 +1,585 @@
+.app {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+}
+
+.app__header h1 {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.app__subtitulo {
+  color: var(--color-muted);
+  margin-top: 0;
+}
+
+.app__footer {
+  margin-top: 2rem;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.connection-badge {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.connection-badge--en_linea {
+  border-color: var(--color-ok);
+  background: rgba(46, 204, 113, 0.08);
+}
+
+.connection-badge--fuera_de_linea {
+  border-color: var(--color-error);
+  background: rgba(230, 57, 70, 0.08);
+}
+
+.connection-badge--verificando {
+  border-color: var(--color-warn);
+  background: rgba(244, 163, 0, 0.08);
+}
+
+.connection-badge__texto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.9rem;
+}
+
+.connection-badge__url,
+.connection-badge__detalle {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+.connection-badge__boton,
+.boton-primario {
+  background: var(--color-accent);
+  color: #06111f;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.connection-badge__boton:hover,
+.boton-primario:hover {
+  filter: brightness(1.1);
+}
+
+.boton-primario:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.forzar-demo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  margin-bottom: 1.25rem;
+}
+
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.panel__header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.panel__estado {
+  color: var(--color-muted);
+}
+
+.panel__error {
+  color: var(--color-error);
+  font-size: 0.9rem;
+}
+
+.source-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+
+.source-tag--live {
+  background: rgba(46, 204, 113, 0.15);
+  color: var(--color-ok);
+  border: 1px solid var(--color-ok);
+}
+
+.source-tag--demo {
+  background: rgba(244, 163, 0, 0.15);
+  color: var(--color-warn);
+  border: 1px solid var(--color-warn);
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.config-grid__item {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+}
+
+.config-grid__item dt {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.config-grid__item dd {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tabs__boton {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-muted);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.tabs__boton--activo {
+  border-color: var(--color-accent);
+  color: var(--color-text);
+  background: rgba(78, 168, 255, 0.1);
+}
+
+.form-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.controller-select {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.controller-select legend {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  padding: 0;
+}
+
+.controller-select__opcion {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+}
+
+.numero-ciclos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.numero-ciclos input {
+  width: 6rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--color-text);
+}
+
+.aviso-demo {
+  color: var(--color-warn);
+  font-size: 0.85rem;
+}
+
+.resultado {
+  margin-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
+}
+
+.resultado__encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.resultado__estado-inicial {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.metrics-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.6rem;
+  margin: 0.75rem 0;
+}
+
+.metrics-summary__item {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 0.6rem;
+  text-align: center;
+}
+
+.metrics-summary__valor {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.metrics-summary__etiqueta {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+}
+
+.cycle-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.cycle-table th,
+.cycle-table td {
+  text-align: right;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cycle-table th:first-child,
+.cycle-table td:first-child,
+.cycle-table th:nth-child(2),
+.cycle-table td:nth-child(2) {
+  text-align: left;
+}
+
+.comparacion-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.comparacion-grid h4 {
+  margin-bottom: 0.25rem;
+}
+
+.comparacion-diferencia {
+  margin-top: 0.75rem;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .comparacion-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Gemelo digital ---------- */
+.numero-ciclos select {
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+}
+
+.twin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.twin-grid--una {
+  grid-template-columns: minmax(0, 640px);
+  justify-content: center;
+}
+
+.twin__encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.twin__encabezado h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.twin-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  border: 1px solid #1d2127;
+  background: #0b0d10;
+}
+
+.twin-hud {
+  font-size: 0.82rem;
+  color: var(--color-muted);
+}
+
+.twin-hud p {
+  margin: 0.35rem 0;
+}
+
+.twin-hud__ok {
+  color: var(--color-ok);
+}
+
+.twin-hud__alerta {
+  color: var(--color-error);
+}
+
+.boton-secundario {
+  background: transparent;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  padding: 0.2rem 0.7rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@media (max-width: 720px) {
+  .twin-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- Layout del gemelo: controles a un lado, escena grande ---- */
+.twin-layout {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.twin-controles .form-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+}
+
+.twin-escena .twin-grid {
+  margin-top: 0;
+}
+
+.twin-escena .twin-grid--una {
+  /* El canvas es cuadrado: se limita por alto de pantalla para que quepa completo. */
+  grid-template-columns: minmax(0, min(760px, calc(100vh - 190px)));
+  justify-content: start;
+}
+
+.config-colapsable {
+  margin-top: 1rem;
+}
+
+.config-colapsable > summary {
+  cursor: pointer;
+  color: var(--color-muted);
+  padding: 0.5rem 0;
+}
+
+/* ---- Indicador de fase ---- */
+.phase-bar {
+  --fase: #6b7480;
+  background: #10141a;
+  border: 1px solid #1d2127;
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.phase-bar[data-estado="green"] { --fase: #2ee66b; }
+.phase-bar[data-estado="yellow"] { --fase: #ffc21a; }
+.phase-bar[data-estado="allred"] { --fase: #ff3b3b; }
+
+.phase-bar__fila {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.phase-bar__punto {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--fase);
+  box-shadow: 0 0 10px var(--fase);
+}
+
+.phase-bar__texto {
+  flex: 1;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.phase-bar__tiempo {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--fase);
+}
+
+.phase-bar__pista {
+  height: 5px;
+  background: #1b2027;
+  border-radius: 3px;
+  margin-top: 0.45rem;
+  overflow: hidden;
+}
+
+.phase-bar__relleno {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--fase);
+}
+
+@media (max-width: 900px) {
+  .twin-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .twin-controles .form-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.twin-escena {
+  scroll-margin-top: 0.75rem;
+}
+
+/* ---- Leyenda de colores de los carros ---- */
+.twin-leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1rem;
+  margin: 0.5rem 0 0.25rem;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.twin-leyenda__item::before {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 10px;
+  border-radius: 3px;
+  margin-right: 0.4rem;
+  vertical-align: -1px;
+}
+
+.twin-leyenda__item--ns::before { background: #4aa3e8; }
+.twin-leyenda__item--eo::before { background: #b58cf2; }
+
+/* ---- Marcador de comparacion ---- */
+.comparacion-marcador {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: #10141a;
+  border: 1px solid #1d2127;
+  border-radius: 10px;
+  padding: 0.6rem 0.85rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.88rem;
+  color: var(--color-muted);
+}
+
+.comparacion-marcador strong {
+  color: var(--color-text);
+}
+
+.comparacion-marcador small {
+  font-size: 0.76rem;
+}
+
+.twin--lider .twin-canvas {
+  border-color: #2ee66b;
+  box-shadow: 0 0 0 1px #2ee66b, 0 0 18px rgba(46, 230, 107, 0.25);
+}
+
+.twin__lider {
+  margin-left: auto;
+  margin-right: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #2ee66b;
+  border: 1px solid #2ee66b;
+  border-radius: 999px;
+  padding: 0.05rem 0.5rem;
+  white-space: nowrap;
+}
+
+.twin__encabezado {
+  flex-wrap: nowrap;
+  min-height: 28px;
+}
+
+.twin__encabezado h3 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.twin__encabezado .source-tag {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
