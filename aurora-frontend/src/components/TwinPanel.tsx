@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { ApiError, auroraApi } from "../services/apiClient";
 import type { CompararResultado, SimulacionResultado, TipoControlador } from "../types/aurora";
 import { lideDeComparacion } from "../services/comparacion";
 import type { ProgresoComparacion } from "../services/comparacion";
 import { ComparisonMarker } from "./ComparisonMarker";
+import { GraficoEspera } from "./GraficoEspera";
 import { TwinView } from "./TwinView";
+import { ApiError, auroraApi } from "../services/apiClient";
 
 type Modo = "una" | "comparar";
 type Fuente = "backend" | "demo";
@@ -21,7 +22,7 @@ interface Escena {
  * (POST /api/simulaciones o /api/simulaciones/comparar) y reproduce la
  * respuesta real. En modo DEMO usa un flujo sintetico claramente etiquetado.
  */
-export function TwinPanel({ modoDemo }: { modoDemo: boolean }) {
+export function TwinPanel({ modoDemo, conectando = false }: { modoDemo: boolean; conectando?: boolean }) {
   const [fuenteElegida, setFuenteElegida] = useState<Fuente>("backend");
   const [modo, setModo] = useState<Modo>("una");
   const [tipo, setTipo] = useState<TipoControlador>("ADAPTATIVO");
@@ -67,8 +68,29 @@ export function TwinPanel({ modoDemo }: { modoDemo: boolean }) {
   return (
     <section className="panel">
       <header className="panel__header">
-        <h2>Gemelo digital de la interseccion</h2>
+        <h2>Gemelo digital de la intersección</h2>
       </header>
+
+      <details className="guia-lectura" open>
+        <summary>¿Qué estoy viendo?</summary>
+        <ul>
+          <li>
+            Una <strong>intersección vista desde arriba</strong> con dos calles que se cruzan. Los números dentro
+            de los recuadros son los <strong>vehículos esperando</strong> en cada acceso.
+          </li>
+          <li>
+            El <strong>ciclo fijo</strong> es el semáforo tradicional: alterna cada 15 s sin importar cuántos autos hay.
+            El <strong>adaptativo</strong> da más tiempo de verde a la calle con más autos esperando.
+          </li>
+          <li>
+            Al comparar, gana el que <strong>acumula menos espera</strong>. La espera se mide en vehículo-segundos
+            (veh·s): cuántos autos esperan multiplicado por cuántos segundos.
+          </li>
+          <li>
+            Es una <strong>simulación</strong> con tráfico sintético de una sola intersección; no son mediciones en una vía real.
+          </li>
+        </ul>
+      </details>
 
       <div className="twin-layout">
       <div className="twin-controles">
@@ -151,8 +173,19 @@ export function TwinPanel({ modoDemo }: { modoDemo: boolean }) {
           </>
         )}
 
-        <button type="button" className="boton-primario" onClick={ejecutar} disabled={cargando}>
-          {cargando ? "Ejecutando…" : fuente === "demo" ? "Reiniciar DEMO" : "Ejecutar y reproducir"}
+        <button
+          type="button"
+          className="boton-primario"
+          onClick={ejecutar}
+          disabled={cargando || (conectando && fuente === "backend")}
+        >
+          {cargando
+            ? "Ejecutando…"
+            : conectando && fuente === "backend"
+              ? "Conectando con el servidor…"
+              : fuente === "demo"
+                ? "Reiniciar DEMO"
+                : "Ejecutar y reproducir"}
         </button>
       </div>
 
@@ -178,7 +211,7 @@ export function TwinPanel({ modoDemo }: { modoDemo: boolean }) {
 
       {fuente === "backend" && !escena && !cargando && (
         <p className="panel__estado">
-          Pulsa «Ejecutar y reproducir»: el backend calcula la simulacion y aqui se anima ciclo a ciclo.
+          Pulsa «Ejecutar y reproducir»: el backend calcula la simulación y aquí se anima ciclo a ciclo. Para ver la diferencia entre los dos semáforos, elige «Comparar lado a lado».
         </p>
       )}
 
@@ -217,6 +250,7 @@ export function TwinPanel({ modoDemo }: { modoDemo: boolean }) {
               lider={lideDeComparacion(escena.comparacion, progreso)?.lider === "adaptativo"}
             />
           </div>
+          <GraficoEspera comparacion={escena.comparacion} progreso={progreso} />
           <p className="comparacion-diferencia">
             {escena.comparacion.diferenciaCalculable
               ? `Diferencia porcentual de espera acumulada: ${escena.comparacion.diferenciaPorcentualEsperaAcumulada}% (calculada por el backend)`

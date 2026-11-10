@@ -21,6 +21,35 @@ interface Props {
   lider?: boolean;
 }
 
+const NOMBRE_FASE: Record<string, string> = { NORTE_SUR: "Norte–Sur", ESTE_OESTE: "Este–Oeste" };
+
+/** Explica, en lenguaje sencillo, por que el controlador eligio esa fase y esa duracion (solo texto; usa datos del backend). */
+function explicarDecision(resultado: SimulacionResultado, indice: number): string {
+  const ciclo = resultado.ciclos[indice];
+  const previo =
+    indice === 0
+      ? {
+          ns: resultado.estadoInicial.vehiculosEsperaNorteSur,
+          eo: resultado.estadoInicial.vehiculosEsperaEsteOeste,
+        }
+      : {
+          ns: resultado.ciclos[indice - 1].vehiculosEsperaNorteSur,
+          eo: resultado.ciclos[indice - 1].vehiculosEsperaEsteOeste,
+        };
+  const nsVerde = ciclo.faseActiva === "NORTE_SUR";
+  const colaVerde = nsVerde ? previo.ns : previo.eo;
+  const colaRoja = nsVerde ? previo.eo : previo.ns;
+  const fase = NOMBRE_FASE[ciclo.faseActiva];
+  if (resultado.tipoControlador === "CICLO_FIJO") {
+    return `Verde para ${fase} durante ${ciclo.duracionAccionSegundos} s. El ciclo fijo alterna siempre igual, sin mirar cuántos vehículos esperan (aquí había ${colaVerde} y en la otra dirección ${colaRoja}).`;
+  }
+  const razon =
+    colaVerde === colaRoja
+      ? `había el mismo número de vehículos esperando en ambas direcciones (${colaVerde}) y se prioriza Norte–Sur`
+      : `era la dirección con más vehículos esperando (${colaVerde} frente a ${colaRoja})`;
+  return `Verde para ${fase} durante ${ciclo.duracionAccionSegundos} s: ${razon}. El adaptativo alarga el verde cuando la cola es larga y lo acorta cuando es corta.`;
+}
+
 interface CicloEnCurso {
   indice: number;
   total: number;
@@ -96,9 +125,9 @@ export function TwinView({ titulo, fuente, resultado, timeScale, onProgreso, lid
       <TrafficCanvas store={store} label={`Vista cenital de la interseccion: ${titulo}`} />
 
       <div className="twin-leyenda" aria-label="Leyenda de colores">
-        <span className="twin-leyenda__item twin-leyenda__item--ns">Norte–Sur</span>
-        <span className="twin-leyenda__item twin-leyenda__item--eo">Este–Oeste</span>
-        <span className="twin-leyenda__nota">Luz trasera roja = detenido</span>
+        <span className="twin-leyenda__item twin-leyenda__item--ns">Autos Norte–Sur</span>
+        <span className="twin-leyenda__item twin-leyenda__item--eo">Autos Este–Oeste</span>
+        <span className="twin-leyenda__nota">Luz trasera roja = detenido · Número = vehículos en espera</span>
       </div>
 
       <div className="twin-hud">
@@ -111,30 +140,36 @@ export function TwinView({ titulo, fuente, resultado, timeScale, onProgreso, lid
 
         {fuente === "backend" && actual && (
           <>
-            <p>
+            <p className="twin-hud__decision" aria-live="polite">
               <strong>
-                Ciclo {actual.indice + 1}/{actual.total}
+                Ciclo {actual.indice + 1} de {actual.total}.
               </strong>{" "}
-              · fase <code>{actual.ciclo.faseActiva}</code> · {actual.ciclo.duracionAccionSegundos} s
-              simulados (x{timeScale}) · {actual.ciclo.vehiculosDescargados} vehiculos cruzan
+              {resultado ? explicarDecision(resultado, actual.indice) : null}
             </p>
             <p>
-              Espera acumulada (backend): {actual.ciclo.tiempoEsperaAcumuladoVehSeg.toFixed(1)} veh·s
+              Cruzan {actual.ciclo.vehiculosDescargados} vehículos en este ciclo · {actual.ciclo.duracionAccionSegundos}{" "}
+              s simulados (reproducidos a x{timeScale}) · Espera total hasta ahora:{" "}
+              <strong>{Math.round(actual.ciclo.tiempoEsperaAcumuladoVehSeg).toLocaleString("es-CO")} veh·s</strong>
             </p>
           </>
         )}
 
         {fuente === "backend" && verificado && (
-          <p className={coincide ? "twin-hud__ok" : "twin-hud__alerta"}>
-            Ciclo {verificado.indice + 1} · cola backend NS {verificado.ciclo.vehiculosEsperaNorteSur} / EO{" "}
-            {verificado.ciclo.vehiculosEsperaEsteOeste} · cola dibujada NS {verificado.dibujado.ns} / EO{" "}
-            {verificado.dibujado.eo} {coincide ? "✓ coincide" : "✗ NO coincide"}
-          </p>
+          <details className="twin-hud__detalles">
+            <summary className={coincide ? "twin-hud__ok" : "twin-hud__alerta"}>
+              Verificación técnica: {coincide ? "✓ lo dibujado coincide con el backend" : "✗ NO coincide con el backend"}
+            </summary>
+            <p>
+              Ciclo {verificado.indice + 1} · cola backend NS {verificado.ciclo.vehiculosEsperaNorteSur} / EO{" "}
+              {verificado.ciclo.vehiculosEsperaEsteOeste} · cola dibujada NS {verificado.dibujado.ns} / EO{" "}
+              {verificado.dibujado.eo}
+            </p>
+          </details>
         )}
 
         {fuente === "backend" && terminado && (
           <p>
-            Reproduccion finalizada.{" "}
+            Reproducción finalizada.{" "}
             <button type="button" className="boton-secundario" onClick={() => setRepeticion((n) => n + 1)}>
               Repetir
             </button>

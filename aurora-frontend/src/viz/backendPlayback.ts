@@ -27,8 +27,12 @@ const POOL: Record<FaseSemaforica, readonly [Approach, Approach]> = {
 
 /** Segundos de reproduccion que se siguen animando tras el ultimo ciclo para que los autos terminen de salir. */
 const DRAIN_SECONDS = 2.5;
-/** Los vehiculos de un ciclo se liberan en la primera mitad del verde, dejando margen para despejar la interseccion. */
-const RELEASE_WINDOW = 0.5;
+/**
+ * Segundos simulados que tarda en salir cada vehiculo. Es el mismo valor que usa el backend
+ * (segundosPorVehiculoDescarga en ConfiguracionAurora): la descarga de un ciclo es duracion / 2,
+ * asi que soltar un auto cada 2 s lo reparte a lo largo de todo el verde, sin tramos muertos.
+ */
+const DISCHARGE_SECONDS = 2;
 
 export interface DibujadoEnCola {
   ns: number;
@@ -155,9 +159,13 @@ export class BackendPlayback {
     };
 
     const descargados = ciclo.vehiculosDescargados;
+    // Un auto cada DISCHARGE_SECONDS simulados; si por algun motivo no cupieran en el verde,
+    // se reparten uniformemente para que todos salgan dentro del ciclo.
+    const pasoSim = Math.min(DISCHARGE_SECONDS, ciclo.duracionAccionSegundos / Math.max(descargados, 1));
+    const paso = pasoSim / this.timeScale;
     for (let k = 0; k < descargados; k++) {
       this.events.push({
-        at: start + (k * RELEASE_WINDOW * duration) / Math.max(descargados, 1),
+        at: start + k * paso,
         kind: "release",
         dir: ciclo.faseActiva,
       });

@@ -13,7 +13,7 @@ export function CycleTable({ ciclos }: { ciclos: CicloDto[] }) {
           <th>Espera NS</th>
           <th>Espera EO</th>
           <th>Cola total</th>
-          <th>Espera acum. (veh·s)</th>
+          <th>Espera acumulada (veh·s)</th>
         </tr>
       </thead>
       <tbody>

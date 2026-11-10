@@ -583,3 +583,135 @@
   white-space: nowrap;
   flex-shrink: 0;
 }
+
+/* ---- Mejoras de claridad visual ---- */
+.app__aviso-simulacion {
+  display: inline-block;
+  margin: 0 0 0.75rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--color-warn);
+  border-radius: 8px;
+  color: var(--color-warn);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.guia-lectura {
+  margin: 0 0 1rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: rgba(78, 168, 255, 0.06);
+}
+.guia-lectura summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.guia-lectura ul {
+  margin: 0.6rem 0 0.2rem;
+  padding-left: 1.2rem;
+  line-height: 1.5;
+}
+.guia-lectura li {
+  margin-bottom: 0.35rem;
+}
+
+.comparacion-marcador__titular {
+  font-size: 1.25rem;
+  line-height: 1.3;
+  color: var(--color-text);
+}
+.comparacion-marcador--final {
+  border-color: var(--color-ok);
+  background: rgba(46, 204, 113, 0.08);
+}
+.comparacion-marcador span {
+  font-size: 0.95rem;
+}
+
+.twin-hud__decision {
+  font-size: 1.05rem;
+  line-height: 1.45;
+  color: var(--color-text);
+}
+.twin-hud__detalles summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.twin-leyenda__nota {
+  font-size: 0.9rem;
+}
+
+.grafico-espera {
+  margin: 0.75rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: #10141a;
+}
+.grafico-espera figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: 0.4rem;
+}
+.grafico-espera figcaption span {
+  color: var(--color-muted);
+  font-size: 0.88rem;
+}
+.grafico-espera svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.grafico-espera__rejilla {
+  stroke: #2a3b5c;
+  stroke-width: 1;
+}
+.grafico-espera__eje {
+  fill: #b7c3dd;
+  font-size: 15px;
+}
+.grafico-espera__titulo-eje {
+  fill: #93a2c2;
+  font-size: 15px;
+  font-weight: 600;
+}
+.grafico-espera__linea {
+  fill: none;
+  stroke-width: 4;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.grafico-espera__linea--fijo {
+  stroke: #cbd5e1;
+  stroke-dasharray: 10 7;
+}
+.grafico-espera__linea--adap {
+  stroke: #2ecc71;
+}
+.grafico-espera__punto--fijo {
+  fill: #cbd5e1;
+}
+.grafico-espera__punto--adap {
+  fill: #2ecc71;
+}
+.grafico-espera__valor {
+  fill: #e8edf7;
+  font-size: 17px;
+  font-weight: 700;
+}
+.grafico-espera__leyenda {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.95rem;
+  margin-top: 0.3rem;
+}
+.grafico-espera__ley--fijo {
+  color: #cbd5e1;
+}
+.grafico-espera__ley--adap {
+  color: #2ecc71;
+}

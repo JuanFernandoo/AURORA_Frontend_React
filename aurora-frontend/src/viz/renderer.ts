@@ -166,8 +166,8 @@ export function drawQueueBadges(
   queues: Record<Approach, number>,
   signals: SignalMap,
 ): void {
-  const w = 100;
-  const h = 62;
+  const w = 124;
+  const h = 76;
   ctx.textAlign = "center";
   ctx.textBaseline = "alphabetic";
   for (const approach of ["N", "S", "E", "W"] as const) {
@@ -181,14 +181,14 @@ export function drawQueueBadges(
     ctx.stroke();
 
     ctx.fillStyle = "#9aa4af";
-    ctx.font = `600 12px ${FONT}`;
-    ctx.fillText(b.name, b.x, b.y - 14);
+    ctx.font = `700 16px ${FONT}`;
+    ctx.fillText(b.name, b.x, b.y - 16);
     ctx.fillStyle = "#f2f5f8";
-    ctx.font = `700 28px ${FONT}`;
-    ctx.fillText(String(queues[approach]), b.x, b.y + 14);
+    ctx.font = `800 38px ${FONT}`;
+    ctx.fillText(String(queues[approach]), b.x, b.y + 15);
     ctx.fillStyle = "#7d8791";
-    ctx.font = `500 10px ${FONT}`;
-    ctx.fillText("en espera", b.x, b.y + 25);
+    ctx.font = `600 14px ${FONT}`;
+    ctx.fillText("en espera", b.x, b.y + 31);
   }
 }
 
@@ -202,17 +202,17 @@ export function drawMetricsPanel(
   metrics: MetricsInfo | null,
   queues: Record<Approach, number>,
 ): void {
-  const x = 26;
-  const y = 26;
-  const w = 220;
+  const x = 20;
+  const y = 16;
+  const w = 250;
   const rows: Array<[string, string]> = [];
   if (metrics) {
     rows.push(["Ciclo", `${metrics.ciclo}/${metrics.total}`]);
-    rows.push(["Espera acum.", `${metrics.esperaAcum.toFixed(1)} veh·s`]);
+    rows.push(["Espera total", `${metrics.esperaAcum.toFixed(0)} veh·s`]);
     rows.push(["Cruzaron", String(metrics.cruzaron)]);
   }
   rows.push(["Cola total", String(queues.N + queues.S + queues.E + queues.W)]);
-  const h = 34 + rows.length * 22;
+  const h = 38 + rows.length * 26;
 
   ctx.fillStyle = "rgba(10, 12, 15, 0.92)";
   ctx.strokeStyle = "#2a3038";
@@ -225,18 +225,18 @@ export function drawMetricsPanel(
   ctx.textBaseline = "alphabetic";
   ctx.textAlign = "left";
   ctx.fillStyle = "#7d8791";
-  ctx.font = `600 11px ${FONT}`;
-  ctx.fillText(metrics ? "MÉTRICAS DEL BACKEND" : "DEMO · SIN MÉTRICAS REALES", x + 12, y + 20);
+  ctx.font = `700 13px ${FONT}`;
+  ctx.fillText(metrics ? "MÉTRICAS DEL BACKEND" : "DEMO · SIN MÉTRICAS REALES", x + 12, y + 23);
 
   for (let i = 0; i < rows.length; i++) {
-    const baseline = y + 42 + i * 22;
+    const baseline = y + 48 + i * 26;
     ctx.textAlign = "left";
     ctx.fillStyle = "#9aa4af";
-    ctx.font = `500 13px ${FONT}`;
+    ctx.font = `600 16px ${FONT}`;
     ctx.fillText(rows[i][0], x + 12, baseline);
     ctx.textAlign = "right";
     ctx.fillStyle = "#f2f5f8";
-    ctx.font = `700 15px ${FONT}`;
+    ctx.font = `800 18px ${FONT}`;
     ctx.fillText(rows[i][1], x + w - 12, baseline);
   }
   ctx.textAlign = "center";

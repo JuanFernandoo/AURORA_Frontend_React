@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { auroraApi } from "../services/apiClient";
 import type { HealthResponse } from "../types/aurora";
+import { auroraApi } from "../services/apiClient";
 
 export type EstadoConexion = "verificando" | "en_linea" | "fuera_de_linea";
 
@@ -27,18 +27,23 @@ export function useBackendConnection(): UseBackendConnectionResultado {
   const [salud, setSalud] = useState<HealthResponse | null>(null);
   const [ultimoError, setUltimoError] = useState<string | null>(null);
   const montadoRef = useRef(true);
+  const enCursoRef = useRef(false);
 
   const verificar = useCallback(() => {
+    if (enCursoRef.current) return;
+    enCursoRef.current = true;
     setEstado((previo) => (previo === "en_linea" ? previo : "verificando"));
     auroraApi
       .obtenerSalud()
       .then((respuesta) => {
+        enCursoRef.current = false;
         if (!montadoRef.current) return;
         setSalud(respuesta);
         setUltimoError(null);
         setEstado("en_linea");
       })
       .catch((error: unknown) => {
+        enCursoRef.current = false;
         if (!montadoRef.current) return;
         setSalud(null);
         setUltimoError(error instanceof Error ? error.message : String(error));

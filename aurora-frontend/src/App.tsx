@@ -19,9 +19,13 @@ function App() {
   return (
     <div className="app">
       <header className="app__header">
-        <h1>AURORA — Panel de control (frontend React)</h1>
+        <h1>AURORA — Semaforización inteligente</h1>
         <p className="app__subtitulo">
-          Consume el backend Java real (Strategy + Singleton + Observer + Factory) vía HTTP.
+          Compara un semáforo tradicional (ciclo fijo) con uno que se adapta a los vehículos que esperan. Los
+          cálculos los hace un backend en Java; esta página los muestra y los anima.
+        </p>
+        <p className="app__aviso-simulacion">
+          Simulación con tráfico sintético de una sola intersección. No son mediciones en una vía real.
         </p>
       </header>
 
@@ -60,18 +64,21 @@ function App() {
         </button>
       </nav>
 
-      {pestana === "gemelo" && <TwinPanel modoDemo={modoDemo} />}
+      {pestana === "gemelo" && (
+        <TwinPanel modoDemo={modoDemo} conectando={conexion.estado === "verificando"} />
+      )}
       {pestana === "simular" && <SimulationPanel modoDemo={modoDemo} />}
       {pestana === "comparar" && <ComparisonPanel modoDemo={modoDemo} />}
 
       <details className="config-colapsable">
-        <summary>Configuración del backend (parámetros del Singleton)</summary>
+        <summary>Detalles técnicos: configuración del backend (parámetros del Singleton)</summary>
         <ConfigPanel modoDemo={modoDemo} />
       </details>
 
       <footer className="app__footer">
         <p>
-          Backend: <code>{conexion.baseUrl}</code> · Configurable vía <code>VITE_API_BASE_URL</code>
+          Backend: <code>{conexion.baseUrl}</code> · Arquitectura: Strategy + Singleton + Observer + Factory ·
+          Configurable vía <code>VITE_API_BASE_URL</code>
         </p>
       </footer>
     </div>

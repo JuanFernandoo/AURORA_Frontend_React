@@ -15,16 +15,18 @@ import type {
  *
  * La URL base se centraliza mediante la variable de entorno
  * VITE_API_BASE_URL (ver .env.example). Si no esta definida, se usa
- * http://localhost:localhost:8100 como valor por defecto (el puerto por defecto de
+ * http://localhost:8080 como valor por defecto (el puerto por defecto de
  * com.aurora.api.ApiMain).
  */
 
 const BASE_URL: string =
   (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/+$/, "") ??
-  "http://localhost:8100";
+  "http://localhost:8080";
 
-/** Tiempo maximo de espera para considerar que el backend no responde. */
-const TIMEOUT_MS = 8000;
+/** Tiempo maximo de espera para una simulacion (el servidor gratuito puede estar despertando). */
+const TIMEOUT_MS = 30000;
+/** Tiempo maximo para la comprobacion de salud: el plan gratuito de Render puede tardar ~1 min en despertar. */
+const TIMEOUT_SALUD_MS = 65000;
 
 export class ApiError extends Error {
   readonly status: number | null;
@@ -48,9 +50,9 @@ export class BackendUnreachableError extends ApiError {
   }
 }
 
-async function solicitar<T>(ruta: string, init?: RequestInit): Promise<T> {
+async function solicitar<T>(ruta: string, init?: RequestInit, timeoutMs: number = TIMEOUT_MS): Promise<T> {
   const controlador = new AbortController();
-  const temporizador = setTimeout(() => controlador.abort(), TIMEOUT_MS);
+  const temporizador = setTimeout(() => controlador.abort(), timeoutMs);
 
   let respuesta: Response;
   try {
@@ -98,7 +100,7 @@ export const auroraApi = {
 
   /** GET /api/health — verificado con curl, responde {"status":"ok","servicio":"aurora-java-api","version":"1.0.0"}. */
   obtenerSalud(): Promise<HealthResponse> {
-    return solicitar<HealthResponse>("/api/health", { method: "GET" });
+    return solicitar<HealthResponse>("/api/health", { method: "GET" }, TIMEOUT_SALUD_MS);
   },
 
   /** GET /api/config — expone los parametros reales del Singleton ConfiguracionAurora. */

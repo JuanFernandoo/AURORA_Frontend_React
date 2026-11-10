@@ -10,16 +10,22 @@ interface Props {
 }
 
 const ETIQUETAS: Record<EstadoConexion, string> = {
-  verificando: "Verificando conexión…",
+  verificando: "Conectando con el servidor…",
   en_linea: "Backend Java conectado",
   fuera_de_linea: "Backend Java no disponible — mostrando modo DEMO",
 };
 
 export function ConnectionBadge({ estado, salud, ultimoError, baseUrl, reintentar }: Props) {
   return (
-    <div className={`connection-badge connection-badge--${estado}`}>
+    <div className={`connection-badge connection-badge--${estado}`} role="status">
       <div className="connection-badge__texto">
         <strong>{ETIQUETAS[estado]}</strong>
+        {estado === "verificando" && (
+          <span className="connection-badge__detalle">
+            El servidor gratuito se duerme cuando no se usa y puede tardar hasta un minuto en despertar. Cuando
+            responda, aparecerá «Backend Java conectado» y podrás ejecutar la simulación real.
+          </span>
+        )}
         <span className="connection-badge__url">GET {baseUrl}/api/health</span>
         {estado === "en_linea" && salud && (
           <span className="connection-badge__detalle">

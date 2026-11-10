@@ -17,7 +17,7 @@ export function MetricsSummary({ metricas }: { metricas: MetricasDto }) {
       </div>
       <div className="metrics-summary__item">
         <span className="metrics-summary__valor">{metricas.tiempoEsperaAcumuladoVehSeg.toFixed(1)}</span>
-        <span className="metrics-summary__etiqueta">Espera acumulada (veh·s)</span>
+        <span className="metrics-summary__etiqueta">Espera acumulada (vehículo-segundos)</span>
       </div>
       <div className="metrics-summary__item">
         <span className="metrics-summary__valor">{metricas.vehiculosPendientesFinal}</span>
