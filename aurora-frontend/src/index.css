@@ -1,30 +1,42 @@
-:root {
-  color-scheme: light dark;
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-  --color-bg: #0f172a;
-  --color-surface: #16213a;
-  --color-border: #2a3b5c;
-  --color-text: #e8edf7;
-  --color-muted: #93a2c2;
-  --color-accent: #4ea8ff;
-  --color-ok: #2ecc71;
-  --color-warn: #f4a300;
-  --color-error: #e63946;
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap");
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-* {
-  box-sizing: border-box;
+html {
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
-  background: var(--color-bg);
-  color: var(--color-text);
+  background: #ffffff;
+  color: #111418;
+  font-family: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
 }
 
-code {
-  background: rgba(255, 255, 255, 0.08);
-  padding: 0.1rem 0.4rem;
-  border-radius: 4px;
-  font-size: 0.85em;
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+p {
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
 }

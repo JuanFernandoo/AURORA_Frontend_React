@@ -9,6 +9,12 @@ import { useBackendConnection } from "./hooks/useBackendConnection";
 
 type Pestana = "gemelo" | "simular" | "comparar";
 
+const PESTANAS: ReadonlyArray<{ id: Pestana; etiqueta: string }> = [
+  { id: "gemelo", etiqueta: "Gemelo digital" },
+  { id: "simular", etiqueta: "Una estrategia" },
+  { id: "comparar", etiqueta: "Comparar" },
+];
+
 function App() {
   const conexion = useBackendConnection();
   const [pestana, setPestana] = useState<Pestana>("gemelo");
@@ -18,69 +24,60 @@ function App() {
 
   return (
     <div className="app">
-      <header className="app__header">
-        <h1>AURORA — Semaforización inteligente</h1>
-        <p className="app__subtitulo">
-          Compara un semáforo tradicional (ciclo fijo) con uno que se adapta a los vehículos que esperan. Los
-          cálculos los hace un backend en Java; esta página los muestra y los anima.
-        </p>
-        <p className="app__aviso-simulacion">
-          Simulación con tráfico sintético de una sola intersección. No son mediciones en una vía real.
-        </p>
+      <header className="cabecera">
+        <div className="cabecera__fila">
+          <span className="marca">Aurora</span>
+          <ConnectionBadge {...conexion} />
+        </div>
+        <nav className="tabs" aria-label="Secciones">
+          {PESTANAS.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              className={pestana === p.id ? "tabs__boton tabs__boton--activo" : "tabs__boton"}
+              aria-current={pestana === p.id ? "page" : undefined}
+              onClick={() => setPestana(p.id)}
+            >
+              {p.etiqueta}
+            </button>
+          ))}
+        </nav>
       </header>
 
-      <ConnectionBadge {...conexion} />
-
-      <label className="forzar-demo">
-        <input
-          type="checkbox"
-          checked={forzarDemo}
-          onChange={(e) => setForzarDemo(e.target.checked)}
-        />
-        Forzar modo DEMO (ignorar el backend aunque esté disponible)
-      </label>
-
-      <nav className="tabs">
-        <button
-          type="button"
-          className={pestana === "gemelo" ? "tabs__boton tabs__boton--activo" : "tabs__boton"}
-          onClick={() => setPestana("gemelo")}
-        >
-          Gemelo digital
-        </button>
-        <button
-          type="button"
-          className={pestana === "simular" ? "tabs__boton tabs__boton--activo" : "tabs__boton"}
-          onClick={() => setPestana("simular")}
-        >
-          Ejecutar una estrategia
-        </button>
-        <button
-          type="button"
-          className={pestana === "comparar" ? "tabs__boton tabs__boton--activo" : "tabs__boton"}
-          onClick={() => setPestana("comparar")}
-        >
-          Comparar estrategias
-        </button>
-      </nav>
-
-      {pestana === "gemelo" && (
-        <TwinPanel modoDemo={modoDemo} conectando={conexion.estado === "verificando"} />
-      )}
-      {pestana === "simular" && <SimulationPanel modoDemo={modoDemo} />}
-      {pestana === "comparar" && <ComparisonPanel modoDemo={modoDemo} />}
-
-      <details className="config-colapsable">
-        <summary>Detalles técnicos: configuración del backend (parámetros del Singleton)</summary>
-        <ConfigPanel modoDemo={modoDemo} />
-      </details>
-
-      <footer className="app__footer">
+      <section className="intro">
+        <h1>Semáforo fijo frente a semáforo adaptativo</h1>
         <p>
-          Backend: <code>{conexion.baseUrl}</code> · Arquitectura: Strategy + Singleton + Observer + Factory ·
-          Configurable vía <code>VITE_API_BASE_URL</code>
+          Compara un ciclo fijo tradicional con un controlador que reparte el verde según los vehículos que
+          esperan. Los cálculos los hace un backend en Java; esta página los muestra y los anima.
         </p>
-      </footer>
+        <p className="intro__nota">
+          Simulación con tráfico sintético de una sola intersección, no mediciones de una vía real.
+        </p>
+      </section>
+
+      <main>
+        {pestana === "gemelo" && (
+          <TwinPanel modoDemo={modoDemo} conectando={conexion.estado === "verificando"} />
+        )}
+        {pestana === "simular" && <SimulationPanel modoDemo={modoDemo} />}
+        {pestana === "comparar" && <ComparisonPanel modoDemo={modoDemo} />}
+      </main>
+
+      <details className="tecnico">
+        <summary>Detalles técnicos</summary>
+        <div className="tecnico__cuerpo">
+          <label className="forzar-demo">
+            <input type="checkbox" checked={forzarDemo} onChange={(e) => setForzarDemo(e.target.checked)} />
+            Usar el modo demo aunque el backend esté disponible
+          </label>
+          <ConfigPanel modoDemo={modoDemo} />
+          <p className="tecnico__meta">
+            Backend <code>{conexion.baseUrl}</code> (se cambia con <code>VITE_API_BASE_URL</code>). Arquitectura:
+            Strategy, Singleton, Observer y Factory.
+          </p>
+          {conexion.ultimoError && <p className="tecnico__meta">Último error: {conexion.ultimoError}</p>}
+        </div>
+      </details>
     </div>
   );
 }

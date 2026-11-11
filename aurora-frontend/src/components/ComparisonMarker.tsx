@@ -19,7 +19,7 @@ export function ComparisonMarker({
   if (!estado) {
     return (
       <div className="comparacion-marcador" role="status">
-        <strong>Comparando… esperando que ambos semáforos completen su primer ciclo.</strong>
+        <p className="comparacion-marcador__titular">Comparando: esperando el primer ciclo de ambos semáforos.</p>
       </div>
     );
   }
@@ -35,26 +35,20 @@ export function ComparisonMarker({
   } else if (final) {
     titular = "Ambos semáforos obtuvieron la misma espera en este escenario.";
   } else if (estado.lider === "empate") {
-    titular = `Parcial (ciclo ${estado.n} de ${total}): van empatados.`;
+    titular = `Ciclo ${estado.n} de ${total}: van empatados.`;
   } else {
     const nombre = estado.lider === "fijo" ? "El ciclo fijo" : "El semáforo adaptativo";
-    titular = `Parcial (ciclo ${estado.n} de ${total}): ${nombre} lleva menos espera.`;
+    titular = `Ciclo ${estado.n} de ${total}: ${nombre} lleva menos espera.`;
   }
 
   return (
-    <div className={final ? "comparacion-marcador comparacion-marcador--final" : "comparacion-marcador"} role="status">
-      <strong className="comparacion-marcador__titular">{titular}</strong>
-      <span>
-        Espera total sumada de todos los vehículos hasta el ciclo {estado.n}: ciclo fijo{" "}
-        <b>{Math.round(estado.fijo).toLocaleString("es-CO")}</b> · adaptativo{" "}
-        <b>{Math.round(estado.adaptativo).toLocaleString("es-CO")}</b> (vehículo-segundos, veh·s)
-      </span>
-      {!final && (
-        <small>
-          Se compara con el mismo número de ciclos completos. Al inicio el adaptativo puede ir por detrás y
-          mejorar después.
-        </small>
-      )}
+    <div className="comparacion-marcador" role="status">
+      <p className="comparacion-marcador__titular">{titular}</p>
+      <p className="comparacion-marcador__detalle">
+        Espera sumada hasta el ciclo {estado.n}: {Math.round(estado.fijo).toLocaleString("es-CO")} con ciclo fijo y{" "}
+        {Math.round(estado.adaptativo).toLocaleString("es-CO")} con adaptativo (vehículo-segundos).
+        {!final && " Se compara con el mismo número de ciclos; el adaptativo puede ir por detrás al inicio."}
+      </p>
     </div>
   );
 }

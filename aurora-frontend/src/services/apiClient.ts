@@ -15,13 +15,13 @@ import type {
  *
  * La URL base se centraliza mediante la variable de entorno
  * VITE_API_BASE_URL (ver .env.example). Si no esta definida, se usa
- * http://localhost:8080 como valor por defecto (el puerto por defecto de
+ * http://localhost:8100 como valor por defecto (el puerto por defecto de
  * com.aurora.api.ApiMain).
  */
 
 const BASE_URL: string =
   (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/+$/, "") ??
-  "http://localhost:8080";
+  "http://localhost:8100";
 
 /** Tiempo maximo de espera para una simulacion (el servidor gratuito puede estar despertando). */
 const TIMEOUT_MS = 30000;

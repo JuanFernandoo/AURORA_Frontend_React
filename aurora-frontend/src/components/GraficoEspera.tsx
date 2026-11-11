@@ -6,9 +6,9 @@ interface Props {
   progreso: ProgresoComparacion;
 }
 
-const W = 760;
-const H = 300;
-const M = { izq: 78, der: 24, arr: 40, abajo: 56 };
+const W = 640;
+const H = 260;
+const M = { izq: 52, der: 24, arr: 16, abajo: 34 };
 
 /** Marca "bonita" para el maximo del eje Y. */
 function techo(valor: number): number {
@@ -22,7 +22,7 @@ function techo(valor: number): number {
 /**
  * Espera acumulada ciclo a ciclo de las dos estrategias. Las lineas se van dibujando a medida que
  * avanza cada reproduccion. Todos los valores salen de la respuesta del backend (no se recalcula nada).
- * Se distingue por color Y por trazo/marcador (no depende solo del color).
+ * Se distingue por color Y por trazo (continuo frente a discontinuo), no solo por color.
  */
 export function GraficoEspera({ comparacion, progreso }: Props) {
   const fijo = comparacion.cicloFijo.ciclos;
@@ -47,7 +47,7 @@ export function GraficoEspera({ comparacion, progreso }: Props) {
   const ultimoFijo = progreso.fijo > 0 ? fijo[progreso.fijo - 1] : null;
   const ultimoAdap = progreso.adaptativo > 0 ? adap[progreso.adaptativo - 1] : null;
 
-  const marcasY = [0, 0.25, 0.5, 0.75, 1].map((f) => f * maxY);
+  const marcasY = [0, 0.5, 1].map((f) => f * maxY);
   const paso = total <= 15 ? 1 : total <= 30 ? 5 : 10;
   const marcasX = Array.from({ length: total }, (_, i) => i + 1).filter(
     (c) => c === 1 || c === total || c % paso === 0,
@@ -56,8 +56,8 @@ export function GraficoEspera({ comparacion, progreso }: Props) {
   return (
     <figure className="grafico-espera">
       <figcaption>
-        <strong>Espera acumulada ciclo a ciclo</strong>
-        <span>Menos es mejor · cada línea sube porque suma la espera de todos los vehículos</span>
+        <strong>Espera acumulada por ciclo</strong>
+        <span>En vehículo-segundos. Menos es mejor.</span>
       </figcaption>
       <svg
         viewBox={`0 0 ${W} ${H}`}
@@ -73,20 +73,10 @@ export function GraficoEspera({ comparacion, progreso }: Props) {
           </g>
         ))}
         {marcasX.map((c) => (
-          <text key={c} x={x(c)} y={H - M.abajo + 24} textAnchor="middle" className="grafico-espera__eje">
+          <text key={c} x={x(c)} y={H - M.abajo + 22} textAnchor="middle" className="grafico-espera__eje">
             {c}
           </text>
         ))}
-        <text x={(M.izq + W - M.der) / 2} y={H - 8} textAnchor="middle" className="grafico-espera__titulo-eje">
-          Ciclo del semáforo
-        </text>
-        <text
-          transform={`translate(18 ${(M.arr + H - M.abajo) / 2}) rotate(-90)`}
-          textAnchor="middle"
-          className="grafico-espera__titulo-eje"
-        >
-          Espera acumulada (veh·s)
-        </text>
 
         {pFijo.length > 0 && (
           <polyline points={pFijo.join(" ")} className="grafico-espera__linea grafico-espera__linea--fijo" />
@@ -96,16 +86,15 @@ export function GraficoEspera({ comparacion, progreso }: Props) {
         )}
         {ultimoFijo && (
           <g>
-            <rect
-              x={x(progreso.fijo) - 7}
-              y={y(ultimoFijo.tiempoEsperaAcumuladoVehSeg) - 7}
-              width={14}
-              height={14}
+            <circle
+              cx={x(progreso.fijo)}
+              cy={y(ultimoFijo.tiempoEsperaAcumuladoVehSeg)}
+              r={4.5}
               className="grafico-espera__punto--fijo"
             />
             <text
               x={Math.min(x(progreso.fijo), W - M.der - 4)}
-              y={y(ultimoFijo.tiempoEsperaAcumuladoVehSeg) - 14}
+              y={y(ultimoFijo.tiempoEsperaAcumuladoVehSeg) - 12}
               textAnchor="end"
               className="grafico-espera__valor"
             >
@@ -118,12 +107,12 @@ export function GraficoEspera({ comparacion, progreso }: Props) {
             <circle
               cx={x(progreso.adaptativo)}
               cy={y(ultimoAdap.tiempoEsperaAcumuladoVehSeg)}
-              r={8}
+              r={4.5}
               className="grafico-espera__punto--adap"
             />
             <text
               x={Math.min(x(progreso.adaptativo), W - M.der - 4)}
-              y={y(ultimoAdap.tiempoEsperaAcumuladoVehSeg) + 28}
+              y={y(ultimoAdap.tiempoEsperaAcumuladoVehSeg) + 24}
               textAnchor="end"
               className="grafico-espera__valor"
             >
@@ -133,8 +122,8 @@ export function GraficoEspera({ comparacion, progreso }: Props) {
         )}
       </svg>
       <div className="grafico-espera__leyenda">
-        <span className="grafico-espera__ley grafico-espera__ley--fijo">■ Ciclo fijo (línea discontinua)</span>
-        <span className="grafico-espera__ley grafico-espera__ley--adap">● Adaptativo (línea continua)</span>
+        <span className="grafico-espera__ley grafico-espera__ley--fijo">Ciclo fijo (discontinua)</span>
+        <span className="grafico-espera__ley grafico-espera__ley--adap">Adaptativo (continua)</span>
       </div>
     </figure>
   );

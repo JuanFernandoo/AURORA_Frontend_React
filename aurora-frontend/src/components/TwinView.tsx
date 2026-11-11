@@ -111,70 +111,81 @@ export function TwinView({ titulo, fuente, resultado, timeScale, onProgreso, lid
 
   return (
     <div className={lider ? "twin twin--lider" : "twin"}>
-      <div className="twin__encabezado">
-        <h3>{titulo}</h3>
-        {lider && (
-          <span className="twin__lider" title="Menor espera acumulada con el mismo numero de ciclos completos">
-            ▲ Va mejor
-          </span>
-        )}
-        <SourceTag fuente={fuente === "backend" ? "live" : "demo"} />
-      </div>
+      <div className="twin__cuerpo">
+        <div className="twin__vista">
+          <div className="twin__encabezado">
+            <h3>{titulo}</h3>
+            {lider && (
+              <span className="twin__lider" title="Menor espera acumulada con el mismo numero de ciclos completos">
+                Va mejor
+              </span>
+            )}
+            <SourceTag fuente={fuente === "backend" ? "live" : "demo"} />
+          </div>
 
-      <PhaseBar store={store} />
-      <TrafficCanvas store={store} label={`Vista cenital de la interseccion: ${titulo}`} />
+          <PhaseBar store={store} />
+          <TrafficCanvas store={store} label={`Vista cenital de la interseccion: ${titulo}`} />
 
-      <div className="twin-leyenda" aria-label="Leyenda de colores">
-        <span className="twin-leyenda__item twin-leyenda__item--ns">Autos Norte–Sur</span>
-        <span className="twin-leyenda__item twin-leyenda__item--eo">Autos Este–Oeste</span>
-        <span className="twin-leyenda__nota">Luz trasera roja = detenido · Número = vehículos en espera</span>
-      </div>
+          <div className="twin-leyenda" aria-label="Leyenda de colores">
+            <span className="twin-leyenda__item twin-leyenda__item--ns">Norte–Sur</span>
+            <span className="twin-leyenda__item twin-leyenda__item--eo">Este–Oeste</span>
+          </div>
+        </div>
 
-      <div className="twin-hud">
-        {fuente === "demo" && (
-          <p>
-            Flujo sintetico (x, y, angulo y semaforo amarillo) generado en el navegador. No proviene del
-            backend Java.
-          </p>
-        )}
-
-        {fuente === "backend" && actual && (
-          <>
-            <p className="twin-hud__decision" aria-live="polite">
-              <strong>
-                Ciclo {actual.indice + 1} de {actual.total}.
-              </strong>{" "}
-              {resultado ? explicarDecision(resultado, actual.indice) : null}
+        <div className="twin-hud">
+          {fuente === "demo" && (
+            <p className="twin-hud__decision">
+              Flujo sintético generado en el navegador. No proviene del backend Java.
             </p>
-            <p>
-              Cruzan {actual.ciclo.vehiculosDescargados} vehículos en este ciclo · {actual.ciclo.duracionAccionSegundos}{" "}
-              s simulados (reproducidos a x{timeScale}) · Espera total hasta ahora:{" "}
-              <strong>{Math.round(actual.ciclo.tiempoEsperaAcumuladoVehSeg).toLocaleString("es-CO")} veh·s</strong>
-            </p>
-          </>
-        )}
+          )}
 
-        {fuente === "backend" && verificado && (
-          <details className="twin-hud__detalles">
-            <summary className={coincide ? "twin-hud__ok" : "twin-hud__alerta"}>
-              Verificación técnica: {coincide ? "✓ lo dibujado coincide con el backend" : "✗ NO coincide con el backend"}
-            </summary>
-            <p>
-              Ciclo {verificado.indice + 1} · cola backend NS {verificado.ciclo.vehiculosEsperaNorteSur} / EO{" "}
-              {verificado.ciclo.vehiculosEsperaEsteOeste} · cola dibujada NS {verificado.dibujado.ns} / EO{" "}
-              {verificado.dibujado.eo}
-            </p>
-          </details>
-        )}
+          {fuente === "backend" && actual && (
+            <>
+              <p className="twin-hud__decision" aria-live="polite">
+                <strong>
+                  Ciclo {actual.indice + 1} de {actual.total}.
+                </strong>{" "}
+                {resultado ? explicarDecision(resultado, actual.indice) : null}
+              </p>
+              <dl className="twin-cifras">
+                <div>
+                  <dt>Cruzan en este ciclo</dt>
+                  <dd>{actual.ciclo.vehiculosDescargados}</dd>
+                </div>
+                <div>
+                  <dt>Simulados (reproducción ×{timeScale})</dt>
+                  <dd>{actual.ciclo.duracionAccionSegundos} s</dd>
+                </div>
+                <div>
+                  <dt>Espera acumulada</dt>
+                  <dd>{Math.round(actual.ciclo.tiempoEsperaAcumuladoVehSeg).toLocaleString("es-CO")} veh·s</dd>
+                </div>
+              </dl>
+            </>
+          )}
 
-        {fuente === "backend" && terminado && (
-          <p>
-            Reproducción finalizada.{" "}
-            <button type="button" className="boton-secundario" onClick={() => setRepeticion((n) => n + 1)}>
-              Repetir
-            </button>
-          </p>
-        )}
+          {fuente === "backend" && verificado && (
+            <details className="twin-hud__detalles">
+              <summary className={coincide ? "twin-hud__ok" : "twin-hud__alerta"}>
+                Verificación técnica: {coincide ? "lo dibujado coincide con el backend" : "NO coincide con el backend"}
+              </summary>
+              <p>
+                Ciclo {verificado.indice + 1}. Cola del backend: NS {verificado.ciclo.vehiculosEsperaNorteSur}, EO{" "}
+                {verificado.ciclo.vehiculosEsperaEsteOeste}. Cola dibujada: NS {verificado.dibujado.ns}, EO{" "}
+                {verificado.dibujado.eo}.
+              </p>
+            </details>
+          )}
+
+          {fuente === "backend" && terminado && (
+            <p className="twin-hud__fin">
+              Reproducción finalizada.{" "}
+              <button type="button" className="enlace" onClick={() => setRepeticion((n) => n + 1)}>
+                Repetir
+              </button>
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

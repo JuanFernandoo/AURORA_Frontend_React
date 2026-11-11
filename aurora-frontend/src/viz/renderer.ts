@@ -13,33 +13,32 @@ import {
 import type { VehiclePair } from "./SceneStore";
 import type { Approach, MetricsInfo, SignalColor, SignalMap } from "./types";
 
-/** Paleta industrial oscura. */
+/** Paleta clara y silenciosa: el color queda reservado a semaforos y vehiculos. */
 const COLORS = {
-  bg: "#0b0d10",
-  block: "#13161b",
-  blockStroke: "#1d2127",
-  blockInner: "#171b20",
-  road: "#23272d",
-  box: "#272b32",
-  curb: "#3b4149",
-  dash: "rgba(210, 215, 222, 0.75)",
-  zebra: "rgba(215, 220, 228, 0.5)",
+  bg: "#F4F5F7",
+  block: "#FFFFFF",
+  blockStroke: "#E6E8EC",
+  road: "#E4E7EC",
+  box: "#DDE1E7",
+  curb: "#CDD2DA",
+  dash: "rgba(255, 255, 255, 0.95)",
+  zebra: "rgba(255, 255, 255, 0.9)",
 } as const;
 
 const SIGNAL_ON: Record<SignalColor, string> = {
-  red: "#ff3b3b",
-  yellow: "#ffc21a",
-  green: "#2ee66b",
+  red: "#E5484D",
+  yellow: "#F2B01E",
+  green: "#2FA866",
 };
 
 const SIGNAL_OFF: Record<SignalColor, string> = {
-  red: "#3a1517",
-  yellow: "#3a2f10",
-  green: "#10321b",
+  red: "#4A2A2D",
+  yellow: "#4A3F22",
+  green: "#21402F",
 };
 
-/** 0 = Norte-Sur (azul), 1 = Este-Oeste (violeta). Evitan rojo/amarillo/verde, que son de los semaforos. */
-const CAR_BODIES = ["#4aa3e8", "#b58cf2"];
+/** 0 = Norte-Sur (grafito), 1 = Este-Oeste (gris azulado). Evitan rojo/amarillo/verde, que son de los semaforos. */
+const CAR_BODIES = ["#1B2430", "#8B96A8"];
 /** Los sprites se pintan a mayor resolucion que la pantalla: al rotar y trasladar, el reescalado sale nitido. */
 const SPRITE_SUPERSAMPLE = 2;
 
@@ -65,15 +64,10 @@ export function createStaticLayer(sizePx: number, scale: number): HTMLCanvasElem
     for (const by of [margin, BOX_MAX + margin]) {
       ctx.fillStyle = COLORS.block;
       ctx.strokeStyle = COLORS.blockStroke;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.roundRect(bx, by, blockSize, blockSize, 8);
       ctx.fill();
-      ctx.stroke();
-      ctx.strokeStyle = COLORS.blockInner;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.roundRect(bx + 14, by + 14, blockSize - 28, blockSize - 28, 4);
       ctx.stroke();
     }
   }
@@ -158,7 +152,7 @@ const BADGES: Record<Approach, { x: number; y: number; name: string }> = {
   E: { x: 590, y: 275, name: "ESTE" },
 };
 
-const FONT = 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif';
+const FONT = '"Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif';
 
 /** Contador de vehiculos en espera por acceso, sobre las manzanas (espacio que antes estaba vacio). */
 export function drawQueueBadges(
@@ -166,29 +160,26 @@ export function drawQueueBadges(
   queues: Record<Approach, number>,
   signals: SignalMap,
 ): void {
-  const w = 124;
-  const h = 76;
+  const w = 96;
+  const h = 62;
   ctx.textAlign = "center";
   ctx.textBaseline = "alphabetic";
   for (const approach of ["N", "S", "E", "W"] as const) {
     const b = BADGES[approach];
-    ctx.fillStyle = "rgba(10, 12, 15, 0.92)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.96)";
     ctx.strokeStyle = SIGNAL_ON[signals[approach]];
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.roundRect(b.x - w / 2, b.y - h / 2, w, h, 9);
+    ctx.roundRect(b.x - w / 2, b.y - h / 2, w, h, 10);
     ctx.fill();
     ctx.stroke();
 
-    ctx.fillStyle = "#9aa4af";
-    ctx.font = `700 16px ${FONT}`;
-    ctx.fillText(b.name, b.x, b.y - 16);
-    ctx.fillStyle = "#f2f5f8";
-    ctx.font = `800 38px ${FONT}`;
-    ctx.fillText(String(queues[approach]), b.x, b.y + 15);
-    ctx.fillStyle = "#7d8791";
+    ctx.fillStyle = "#667085";
     ctx.font = `600 14px ${FONT}`;
-    ctx.fillText("en espera", b.x, b.y + 31);
+    ctx.fillText(b.name, b.x, b.y - 11);
+    ctx.fillStyle = "#111418";
+    ctx.font = `600 32px ${FONT}`;
+    ctx.fillText(String(queues[approach]), b.x, b.y + 22);
   }
 }
 
@@ -198,48 +189,11 @@ export function drawQueueBadges(
  * respuesta; "Cola total" es la suma de los contadores dibujados. En DEMO no hay metricas reales.
  */
 export function drawMetricsPanel(
-  ctx: CanvasRenderingContext2D,
-  metrics: MetricsInfo | null,
-  queues: Record<Approach, number>,
+  _ctx: CanvasRenderingContext2D,
+  _metrics: MetricsInfo | null,
+  _queues: Record<Approach, number>,
 ): void {
-  const x = 20;
-  const y = 16;
-  const w = 250;
-  const rows: Array<[string, string]> = [];
-  if (metrics) {
-    rows.push(["Ciclo", `${metrics.ciclo}/${metrics.total}`]);
-    rows.push(["Espera total", `${metrics.esperaAcum.toFixed(0)} veh·s`]);
-    rows.push(["Cruzaron", String(metrics.cruzaron)]);
-  }
-  rows.push(["Cola total", String(queues.N + queues.S + queues.E + queues.W)]);
-  const h = 38 + rows.length * 26;
-
-  ctx.fillStyle = "rgba(10, 12, 15, 0.92)";
-  ctx.strokeStyle = "#2a3038";
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.roundRect(x, y, w, h, 9);
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.textBaseline = "alphabetic";
-  ctx.textAlign = "left";
-  ctx.fillStyle = "#7d8791";
-  ctx.font = `700 13px ${FONT}`;
-  ctx.fillText(metrics ? "MÉTRICAS DEL BACKEND" : "DEMO · SIN MÉTRICAS REALES", x + 12, y + 23);
-
-  for (let i = 0; i < rows.length; i++) {
-    const baseline = y + 48 + i * 26;
-    ctx.textAlign = "left";
-    ctx.fillStyle = "#9aa4af";
-    ctx.font = `600 16px ${FONT}`;
-    ctx.fillText(rows[i][0], x + 12, baseline);
-    ctx.textAlign = "right";
-    ctx.fillStyle = "#f2f5f8";
-    ctx.font = `800 18px ${FONT}`;
-    ctx.fillText(rows[i][1], x + w - 12, baseline);
-  }
-  ctx.textAlign = "center";
+  // Las metricas (ciclo, espera, vehiculos que cruzan) se muestran fuera del lienzo, en la pagina.
 }
 
 interface Head {
@@ -267,9 +221,9 @@ export function drawSignalHeads(ctx: CanvasRenderingContext2D, signals: SignalMa
     const w = head.vertical ? 24 : 66;
     const h = head.vertical ? 66 : 24;
 
-    ctx.fillStyle = "#0a0c0f";
-    ctx.strokeStyle = "#343a42";
-    ctx.lineWidth = 1.5;
+    ctx.fillStyle = "#1B2028";
+    ctx.strokeStyle = "#2D3540";
+    ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.roundRect(head.x - w / 2, head.y - h / 2, w, h, 7);
     ctx.fill();
@@ -281,7 +235,7 @@ export function drawSignalHeads(ctx: CanvasRenderingContext2D, signals: SignalMa
       const cx = head.vertical ? head.x : head.x + offsets[i];
       const cy = head.vertical ? head.y + offsets[i] : head.y;
       if (lamp === lit) {
-        ctx.globalAlpha = 0.28;
+        ctx.globalAlpha = 0.18;
         ctx.fillStyle = SIGNAL_ON[lamp];
         ctx.beginPath();
         ctx.arc(cx, cy, 17, 0, Math.PI * 2);
@@ -310,14 +264,14 @@ function paintCar(ctx: CanvasRenderingContext2D, body: string, braking: boolean)
   const hw = W / 2;
 
   // Sombra.
-  ctx.fillStyle = "rgba(0, 0, 0, 0.42)";
+  ctx.fillStyle = "rgba(17, 20, 24, 0.14)";
   ctx.beginPath();
   ctx.roundRect(-hl + 1.5, -hw + 2, L, W, 5);
   ctx.fill();
 
   // Resplandor de freno.
   if (braking) {
-    ctx.fillStyle = "rgba(255, 40, 40, 0.32)";
+    ctx.fillStyle = "rgba(229, 72, 77, 0.22)";
     ctx.fillRect(-hl - 5, -hw + 1, 6, W - 2);
   }
 
@@ -326,13 +280,9 @@ function paintCar(ctx: CanvasRenderingContext2D, body: string, braking: boolean)
   ctx.beginPath();
   ctx.roundRect(-hl, -hw, L, W, 5);
   ctx.fill();
-  ctx.fillStyle = "rgba(255, 255, 255, 0.14)";
-  ctx.beginPath();
-  ctx.roundRect(-hl, -hw, L, 5, 4);
-  ctx.fill();
 
   // Cabina: vidrios oscuros y techo.
-  ctx.fillStyle = "rgba(8, 11, 15, 0.9)";
+  ctx.fillStyle = "rgba(10, 14, 20, 0.55)";
   ctx.beginPath();
   ctx.roundRect(-0.23 * L, -0.38 * W, 0.54 * L, 0.76 * W, 4);
   ctx.fill();
@@ -346,7 +296,7 @@ function paintCar(ctx: CanvasRenderingContext2D, body: string, braking: boolean)
   ctx.fillStyle = "#fff6c8";
   ctx.fillRect(hl - 2.5, -hw + 1.5, 2.5, lampH);
   ctx.fillRect(hl - 2.5, hw - 1.5 - lampH, 2.5, lampH);
-  ctx.fillStyle = braking ? "#ff2a2a" : "#6e1a1a";
+  ctx.fillStyle = braking ? "#E5484D" : "#8A5A5C";
   ctx.fillRect(-hl, -hw + 1.5, 2.5, lampH);
   ctx.fillRect(-hl, hw - 1.5 - lampH, 2.5, lampH);
 }

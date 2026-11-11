@@ -10,35 +10,30 @@ interface Props {
 }
 
 const ETIQUETAS: Record<EstadoConexion, string> = {
-  verificando: "Conectando con el servidor…",
-  en_linea: "Backend Java conectado",
-  fuera_de_linea: "Backend Java no disponible — mostrando modo DEMO",
+  verificando: "Conectando",
+  en_linea: "Backend conectado",
+  fuera_de_linea: "Sin conexión, modo demo",
 };
 
+/** Estado de conexión en una sola línea. El detalle técnico queda en el atributo title y en «Detalles técnicos». */
 export function ConnectionBadge({ estado, salud, ultimoError, baseUrl, reintentar }: Props) {
+  const detalle =
+    estado === "en_linea" && salud
+      ? `${salud.servicio} v${salud.version} (${salud.status})`
+      : estado === "fuera_de_linea" && ultimoError
+        ? ultimoError
+        : `GET ${baseUrl}/api/health`;
+
   return (
-    <div className={`connection-badge connection-badge--${estado}`} role="status">
-      <div className="connection-badge__texto">
-        <strong>{ETIQUETAS[estado]}</strong>
-        {estado === "verificando" && (
-          <span className="connection-badge__detalle">
-            El servidor gratuito se duerme cuando no se usa y puede tardar hasta un minuto en despertar. Cuando
-            responda, aparecerá «Backend Java conectado» y podrás ejecutar la simulación real.
-          </span>
-        )}
-        <span className="connection-badge__url">GET {baseUrl}/api/health</span>
-        {estado === "en_linea" && salud && (
-          <span className="connection-badge__detalle">
-            {salud.servicio} v{salud.version} · status: {salud.status}
-          </span>
-        )}
-        {estado === "fuera_de_linea" && ultimoError && (
-          <span className="connection-badge__detalle">{ultimoError}</span>
-        )}
-      </div>
-      <button type="button" onClick={reintentar} className="connection-badge__boton">
-        Reintentar conexión
-      </button>
+    <div className={`estado estado--${estado}`} role="status" title={detalle}>
+      <span className="estado__punto" aria-hidden="true" />
+      <span>{ETIQUETAS[estado]}</span>
+      {estado === "verificando" && <span className="estado__nota">puede tardar hasta un minuto</span>}
+      {estado === "fuera_de_linea" && (
+        <button type="button" className="enlace" onClick={reintentar}>
+          Reintentar
+        </button>
+      )}
     </div>
   );
 }
